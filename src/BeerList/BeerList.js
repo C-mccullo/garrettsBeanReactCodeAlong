@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import BeerCard from './BeerCard';
 import SearchBar from './SearchBar';
+
+import * as actions from './actions';
+import * as favouriteActions from '../FavouriteList/actions';
 
 import './BeerList.css';
 
@@ -12,97 +16,39 @@ class BeerList extends Component {
     this.removeFavourite = this.removeFavourite.bind(this);
     this.beerSearch = this.beerSearch.bind(this);
     this.renderBeers = this.renderBeers.bind(this);
-    this.updateSearchValue = this.updateSearchValue.bind(this);
 
-    this.state = {
-      beerList: [],
-      favourites: [],
-      isFetching: false,
-      searchValue: '',
-    };
   }
 
   componentDidMount() {
-    this.setState({
-      isFetching: true,
-    });
-
-    fetch('https://api.punkapi.com/v2/beers?per_page=24', {
-      method: 'GET',
-    })
-    .then(res => res.json())
-    .then(data => {
-      this.setState({
-        beerList: data,
-      });
-      this.setState({
-        isFetching: false,
-      });
-    });
+    this.props.actions.getBeers();
   }
 
-  addFavourite(asset) {
-    const favouriteIds = this.state.favourites.map(fav => fav.id);
-    if (favouriteIds.includes(asset.id)) return;
-
-    const newArray = this.state.favourites.concat(asset);
-
-    this.setState({
-      favourites: newArray,
-    });
+  addFavourite(beer) {
+    this.props.actions.addFavourite(beer)
   }
 
-  removeFavourite(id) {
-    const favouriteIds = this.state.favourites.map(fav => fav.id);
-    if (!favouriteIds.includes(id)) return;
-
-    const newArray = this.state.favourites.filter(fav => fav.id !== id);
-    this.setState({
-      favourites: newArray,
-    });
+  removeFavourite(beer) {
+    this.props.actions.removeFavourite(beer);
   }
 
-  updateSearchValue(e) {
-    this.setState({
-      searchValue: e.target.value
-    });
-  }
 
   beerSearch(e) {
     e.preventDefault();
-
-    this.setState({
-      isFetching: true,
-    });
-    fetch(`https://api.punkapi.com/v2/beers?per_page=24&beer_name=${this.state.searchValue}`, {
-      method: 'GET',
-    })
-    .then(res => res.json())
-    .then(data => {
-      this.setState({
-        beerList: data,
-      });
-      setTimeout(() => {
-        this.setState({
-          isFetching: false,
-        });
-      }, 350);
-    });
-
+    this.props.actions.getBeers(this.props.searchValue);
   }
 
   renderBeers() {
     const isFavourited = beerId => {
-      const favouriteIds = this.state.favourites.map(fav => fav.id);
+      const favouriteIds = this.props.favouriteList.map(fav => fav.id);
       return favouriteIds.includes(beerId);
     };
 
-    return this.state.beerList.map(beer => {
+    return this.props.beerList.map(beer => {
       return (
         <BeerCard
           key={beer.id}
-          addFavourite={this.addFavourite}
-          removeFavourite={this.removeFavourite}
+          addFavourite={this.props.actions.addFavourite}
+          removeFavourite={this.props.actions.removeFavourite}
           beer={beer}
           isFavourited={isFavourited(beer.id)}
         />
@@ -115,12 +61,12 @@ class BeerList extends Component {
       <div className="section">
         <SearchBar
           onSubmit={this.beerSearch}
-          onChange={this.updateSearchValue}
-          value={this.state.searchValue}
-          isFetching={this.state.isFetching}
+          onChange={this.props.actions.updateSearch}
+          value={this.props.actions.searchValue}
+          isFetching={this.props.isFetching}
         />
         <div className="beerList container is-fluid">
-          { this.state.isFetching ?
+          { this.props.isFetching ?
               null
             :
               this.renderBeers()
@@ -131,4 +77,26 @@ class BeerList extends Component {
   }
 }
 
-export default BeerList;
+function mapStateToProps(state) {
+  return {
+    beerList: state.beerListReducer.beerList,
+    searchValue: state.beerListReducer.searchValue,
+    favouriteList: state.favouriteListReducer.favouriteList
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators({
+      updateSearch: actions.updateSearch,
+      getBeers: actions.getBeers,
+      addFavourite: favouriteActions.addFavourite,
+      removeFavourite: favouriteActions.removeFavourite,
+    }, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BeerList);

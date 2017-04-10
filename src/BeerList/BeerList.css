@@ -12,7 +12,8 @@
   max-width: calc(100% / 3 - 16px);
 }
 
-.beerCard img {
+.beerCard .image img {
+	width: auto;
   max-width: 50%;
   max-height: 100%;
 }

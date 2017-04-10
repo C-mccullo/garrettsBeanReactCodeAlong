@@ -14,6 +14,7 @@ const router = props => {
   return (
     <Router history={history}>
       <div>
+        {/* path with be rendered on all routes and exact path will be rendered at specific pathways */}
         <Route path="/" component={App} />
         <Route exact path="/" component={BeerList} />
         <Route exact path="/favourites" component={FavouriteList} />

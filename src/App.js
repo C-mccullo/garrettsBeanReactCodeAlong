@@ -5,7 +5,7 @@ import './App.css';
 
 function App(props) {
   return (
-    <div className="column">
+    <div className="hero is-primary">
       <nav className="nav">
         <div className="nav-left nav-item">
           <h1 className="title is-2">Beans Love Beers</h1>

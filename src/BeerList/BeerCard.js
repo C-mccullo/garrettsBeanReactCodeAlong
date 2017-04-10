@@ -8,8 +8,9 @@ function BeerCard(props) {
   };
 
   const handleFavourite = (beer, added) => {
+    console.log(beer, added);
     if (added) {
-      props.removeFavourite(beer.id);
+      props.removeFavourite(beer);
       return;
     }
 
