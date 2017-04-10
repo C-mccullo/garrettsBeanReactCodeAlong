@@ -3,6 +3,8 @@
 
 🎉👯👻
 
+🐨 (thanks Garrett) 🐨
+
 A small little project using a beer API to with a searchable text field to make requests to the [punk beer API](https://punkapi.com/documentation/v2) with [Bulma css](http://bulma.io/) for styling.
 
 ### Install
@@ -43,6 +45,8 @@ A small little project using a beer API to with a searchable text field to make 
   * search input and ajax actions moved to redux/thunk
 * `git checkout tags/2.3-favouriteRedux`
   * favourite actions moved to redux
+* `git checkout tags/2.3.5-beerListAndFavourites`
+  * beerList and favouriteList setup in redux
 * `git checkout tags/2.4-loadMoreButton`
   * load more button added
 * `git checkout tags/2.5-signleBeer`
